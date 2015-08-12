@@ -22,35 +22,34 @@ def draw_ttt_board(update_position)
 end
 
 def player_pick_position(update_position)
-  available_position = check_empty_position(update_position)
+  available_position = empty_position(update_position)
   puts "Player pick a position #{available_position}: "
   player_position = gets.chomp.to_i
   update_position[player_position] = 'X'
-  draw_ttt_board(update_position)
-  check_win(update_position)
 end
 
 def computer_pick_position(update_position)
-  computer_position = check_empty_position(update_position).sample
+  computer_position = empty_position(update_position).sample
   update_position[computer_position] = 'O'
-  draw_ttt_board(update_position)
-  check_win(update_position)
 end
 
 def check_win(update_position)
   win_formula = [[1,2,3], [4,5,6], [7,8,9], [1,4,7], [2,5,8], [3,6,9], [1,5,9], [3,5,7]]
   win_formula.each do |line|
-    if (update_position[line[0]] == 'X') && (update_position[line[1]] == 'X') && (update_position[line[2]] == 'X')
-      return 'Player'
-    elsif (update_position[line[0]] == 'O') && (update_position[line[1]] == 'O') && (update_position[line[2]] == 'O')
+    if (update_position[line[0]] == 'O') && 
+      (update_position[line[1]] == 'O') && 
+      (update_position[line[2]] == 'O')
       return 'Computer'
-    elsif check_empty_position(update_position).empty?
-      return 'tie'
+    elsif (update_position[line[0]] == 'X') && 
+      (update_position[line[1]] == 'X') && 
+      (update_position[line[2]] == 'X')
+      return 'Player'
     end
   end
+  nil
 end
 
-def check_empty_position(update_position)
+def empty_position(update_position)
   update_position.select { |position, value| value == ' '}.keys
 end
 
@@ -59,23 +58,25 @@ def any_winner(result)
     puts "#{result} win!"
   elsif result == 'Computer'
     puts "#{result} win!"
-  elsif result == 'tie'
-    puts "It's tie!"
   else
-    puts "No winner yet, please continue"
+    puts "It's tie!"
   end
 end
 
 loop do
+  winner = nil
   hsh_position ={}
   clear_ttt_board(hsh_position)
-  check_empty_position(hsh_position)
   draw_ttt_board(hsh_position)
   begin
     player_pick_position(hsh_position)
+    draw_ttt_board(hsh_position)
+    winner = check_win(hsh_position)
     computer_pick_position(hsh_position)
-  end until  check_win(hsh_position) == 'Player' || check_win(hsh_position) == 'Computer' || check_win(hsh_position) == 'tie'
-  any_winner(check_win(hsh_position))
+    draw_ttt_board(hsh_position)
+    winner = check_win(hsh_position)
+  end until  winner || empty_position(hsh_position).empty?
+  any_winner(winner)
   puts "Type 'y' to replay again."
   break if gets.chomp.downcase != 'y'
 end
