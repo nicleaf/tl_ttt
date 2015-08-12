@@ -7,7 +7,7 @@ def clear_ttt_board(update_position)
 end
 
 def draw_ttt_board(update_position)
-  #system('clear')
+  system('clear')
   puts ""
   puts "Position guide!                          "
   puts ""
