@@ -75,7 +75,6 @@ class Game
     @player = Player.new(player_name, "X")
     @computer = Player.new("Chris_aka_bot", "O")
     @current_player = player
-    display_players_markers
   end
 
   def play
