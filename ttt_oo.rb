@@ -29,9 +29,10 @@ class Board
 
   def mark_position(marker)
     if marker == "X"
-      available_position = empty_position
-      puts "Player pick a position #{available_position}: "
-      player_position = gets.chomp.to_i
+      begin
+        puts "Player pick a position #{empty_position}: "
+        player_position = gets.chomp.to_i
+      end until empty_position.include?(player_position) 
       position[player_position] = marker
     else
       computer_position = empty_position.sample
@@ -56,22 +57,11 @@ class Board
   end
 end
 
-class Square < Board
-  def mark(symbol)
-    @position = symbol
-  end
-
-end
-
 class Player
   attr_reader :name, :marker
   def initialize(name,marker)
     @name = name
     @marker = marker
-  end
-    
-  def to_s
-    "#{name} using #{marker}"
   end
 end
 
@@ -85,16 +75,18 @@ class Game
     @player = Player.new(player_name, "X")
     @computer = Player.new("Chris_aka_bot", "O")
     @current_player = player
-#    puts "#{player}"
-#    puts "#{computer}"
-#    puts "#{@current_player}"
+    display_players_markers
   end
 
   def play
     loop do
       winner = nil
-      board = Square.new
+      @current_player = player
+      board = Board.new
       board.draw
+      display_players_markers
+      who_start_first
+      display_current_player
       begin
         board.mark_position(current_player.marker)
         board.draw
@@ -130,6 +122,23 @@ class Game
       puts "It's tie!"
     end
   end
+
+  def display_players_markers
+    puts "#{player.name} using #{player.marker}"
+    puts "#{computer.name} using #{computer.marker}"
+  end
+
+  def display_current_player
+    puts "#{current_player.name} start first."
+  end
+
+  def who_start_first
+    puts "Type 'y' for you to start the first move."
+    start_first = gets.chomp.downcase
+    @current_player = player if start_first == 'y'
+    @current_player = computer if start_first != 'y'
+  end
+
 end
 
 Game.new.play
